@@ -1,0 +1,41 @@
+package jflex_cup;
+
+import java_cup.runtime.*;
+
+
+parser code {:
+	// Connect this parser to a scanner!
+	public parser(AnalizadorLexico lex) {
+		super(lex);
+	}
+
+        public void syntax_error(Symbol cur_token) {
+            System.out.println("Error sobrecargado");
+        }
+:}
+
+/* Terminals (tokens returned by the scanner). */
+terminal String          PCOMA, ID, MAS, MENOS, IGUAL;
+terminal Integer         ENTERO;
+
+/* Non-terminals */
+non terminal Object           expr_sumas, expr_suma;
+non terminal Integer          termino;
+
+
+/* The grammar */
+start with expr_sumas;
+
+expr_sumas ::=	 expr_sumas expr_suma 
+			| expr_suma 
+			;
+
+expr_suma ::=	termino:e1 MAS termino:e2  PCOMA
+			    {: RESULT = new Integer(e1.intValue() + e2.intValue()); System.out.printf(" suma = %d\n", RESULT); :} 
+
+			| error:e PCOMA
+			;
+
+termino ::=	ENTERO:e                
+				{: RESULT = e; :} 
+			;
